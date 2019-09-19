@@ -60,9 +60,12 @@ class App extends Component {
     const {filter, logs}= this.state;
     //return the matching object from logs based on any value typed in filter input, if filter is empty gives back all the logs
     const filteredData = logs.filter(log=>{
-      return Object.keys(log).some(key =>
-        log[key].toLowerCase().includes(filter.toLowerCase())
-      );
+      return Object.keys(log).some((key) => {
+        // if(log[key].toLowerCase().includes(filter.toLowerCase())){
+        //   console.log("log found: "+log[key].toLowerCase());
+        // }
+        return log[key].toLowerCase().includes(filter.toLowerCase())
+      });
     })
     // TODO: make it more dynamic for handling jsons...
     return (
@@ -82,7 +85,7 @@ class App extends Component {
           <div className="row">
             <table className="table table-hover table-dark">
               <thead>
-              {logs.length>1 ? 
+              {logs.length>0 ? 
                 <tr>
                   <th scope="col" onClick={() => this.sortObj('datetime')}>#</th>
                   <th scope="col" onClick={() => this.sortObj('type')}>Type</th>
@@ -92,7 +95,7 @@ class App extends Component {
                 </tr> : null }
               </thead>
               <tbody>
-                {filteredData.length>1 ? filteredData.map( (rowData,index) => <Row key={index} {...rowData} />): null }
+                {filteredData.length>0 ? filteredData.map( (rowData,index) => <Row key={index} {...rowData} />): null }
               </tbody>
             </table>
           </div>
