@@ -16,6 +16,7 @@ class App extends Component {
      this.comparison = this.comparison.bind(this);
      this.onChange = this.onChange.bind(this);
      this.handleFilter = this.handleFilter.bind(this);
+     this.resetViewer = this.resetViewer.bind(this);
   }
 
   componentDidMount() {
@@ -69,6 +70,11 @@ class App extends Component {
     this.setState({[e.target.name]: e.target.value});
   }
 
+  resetViewer = (e) =>{
+    // console.log("resetting viewer");
+    this.setState({logs: [],headers:[]});
+  }
+
   render() {
     const {filter, logs}= this.state;
     //return the matching object from logs based on any value typed in filter input, if filter is empty gives back all the logs
@@ -84,10 +90,12 @@ class App extends Component {
       <div className="container">
         <div className="row form-group">
           <div className="col-md-4"></div>
+          {logs.length===0 ? 
           <div className="col-md-4 custom-file">
             <input type="file" onChange={this.onChange} className="custom-file-input" id="customFile" name="file"/>
             <label className="custom-file-label" htmlFor="customFile">Choose file</label>
           </div>
+          :<button className="btn btn-primary" type="button" onClick={this.resetViewer.bind(this)}>Import a new file</button>}
           <div className="col-md-4">
           {logs.length>1 ? 
           <input className="form-control" value={this.state.filter} onChange={this.handleFilter} placeholder="Search or filter records" name="filter"/>
