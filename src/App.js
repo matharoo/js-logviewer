@@ -8,7 +8,8 @@ class App extends Component {
     super(props);
     this.state = { 
       logs: [],
-      filter: ""
+      headers: [],
+      filter: "",
      };
      
      this.sortObj = this.sortObj.bind(this);
@@ -36,9 +37,9 @@ class App extends Component {
   })
 
   onChange = (event) => {
-    console.log(event);
-    if(event.target.length == 0 ){
-      console.log("cancel was clicked");
+    // console.log(event);
+    if(event.target.length === 0 ){
+      // console.log("cancel was clicked");
       // dont do anything.
     }
     else{
@@ -46,8 +47,18 @@ class App extends Component {
       var reader = new FileReader();
       
       reader.onload = () => {
-        console.log(reader.result);
+        // console.log(reader.result);
         this.setState({ logs: JSON.parse(reader.result) })
+        const data= JSON.parse(reader.result);
+        // console.log("data is :"+data);
+        let headers = data.reduce(function(arr, o) {
+          return Object.keys(o).reduce(function(a, k) {
+            if (a.indexOf(k) === -1) a.push(k);
+            return a;
+          }, arr)
+        }, []);
+        // console.log(headers);
+        this.setState({ headers: headers })
       }
       reader.readAsText(file);
     }
@@ -55,12 +66,7 @@ class App extends Component {
   }
 
   handleFilter = (e) => {
-    // console.log(e.target.value);
-    const logs = this.state.logs;
-    // let filtered= [];
-    console.log("filtered data: ");
     this.setState({[e.target.name]: e.target.value});
-    // this.setState({logs: filtered});
   }
 
   render() {
@@ -68,13 +74,9 @@ class App extends Component {
     //return the matching object from logs based on any value typed in filter input, if filter is empty gives back all the logs
     const filteredData = logs.filter(log=>{
       return Object.keys(log).some((key) => {
-        // if(log[key].toLowerCase().includes(filter.toLowerCase())){
-        //   console.log("log found: "+log[key].toLowerCase());
-        // }
         return log[key].toLowerCase().includes(filter.toLowerCase())
       });
     })
-    // TODO: make it more dynamic for handling jsons...
     return (
       <div className="App">
       <header className="App-header">
@@ -90,6 +92,7 @@ class App extends Component {
           {logs.length>1 ? 
           <input className="form-control" value={this.state.filter} onChange={this.handleFilter} placeholder="Search or filter records" name="filter"/>
           : null }
+          
         </div>
         </div>
       </div>
@@ -97,17 +100,13 @@ class App extends Component {
           <div className="row">
             <table className="table table-hover table-dark">
               <thead>
-              {logs.length>0 ? 
                 <tr>
-                  <th scope="col" onClick={() => this.sortObj('datetime')}>#</th>
-                  <th scope="col" onClick={() => this.sortObj('type')}>Type</th>
-                  <th scope="col" onClick={() => this.sortObj('name')}>Name</th>
-                  <th scope="col" onClick={() => this.sortObj('message')}>Message</th>
-                  <th scope="col" onClick={() => this.sortObj('source')}>Source</th>
-                </tr> : null }
+                {this.state.headers.length>0 ? this.state.headers.map( (header) => <th key={header} scope="col" onClick={this.sortObj.bind(this, header)}><u>{header}</u></th>) : null }
+                </tr>
               </thead>
               <tbody>
-                {filteredData.length>0 ? filteredData.map( (rowData,index) => <Row key={index} {...rowData} />): null }
+              {/* checking for headers otherwise the component doesnt recieve header prop */}
+                {filteredData.length>0 && this.state.headers.length ? filteredData.map( (rowData,index) => <Row key={index} {...rowData} header={this.state.headers} />): null }
               </tbody>
             </table>
           </div>

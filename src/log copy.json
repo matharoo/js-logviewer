@@ -4,7 +4,8 @@
         "type": "ERROR",
         "name": "Death",
         "message": "Nicole has died of dysentry",
-        "source": "com.devcpu.oregontrail.uhoh"
+        "source": "com.devcpu.oregontrail.uhoh",
+        "test": "lol"
     },
     {
         "datetime": "2013-10-15T19:14:05",
@@ -109,7 +110,8 @@
         "type": "INFO",
         "name": "PackedItem",
         "message": "You have decided to pack a rifle",
-        "source": "com.devcpu.oregantrail.poorBuffalo"
+        "source": "com.devcpu.oregantrail.poorBuffalo",
+        "test": "lol"
     },
     {
         "datetime": "2013-10-15T09:05:05",
@@ -119,7 +121,6 @@
         "source": "com.devcpu.oregantrail.packinTime"
     },
     {
-        "datetime": "2013-10-15T09:05:05",
         "type": "INFO",
         "name": "Start",
         "message": "You have started your journey",

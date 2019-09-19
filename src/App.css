@@ -58,3 +58,15 @@ body{
 #app .table .header div {
   cursor: pointer;
 }
+
+.info{
+  background-color: #4e8790!important
+}
+
+.error{
+  background-color: #dc3545!important;
+}
+
+.warn{
+  background-color: #ab8000!important;
+}
