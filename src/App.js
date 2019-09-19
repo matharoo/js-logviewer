@@ -37,14 +37,21 @@ class App extends Component {
 
   onChange = (event) => {
     console.log(event);
-    var file = event.target.files[0];
-    var reader = new FileReader();
-    reader.onload = () => {
-      console.log(reader.result);
-      this.setState({ logs: JSON.parse(reader.result) })
+    if(event.target.length == 0 ){
+      console.log("cancel was clicked");
+      // dont do anything.
     }
-    //TODO: fix cancel crashing fileupload
-    reader.readAsText(file);
+    else{
+      var file = event.target.files[0];
+      var reader = new FileReader();
+      
+      reader.onload = () => {
+        console.log(reader.result);
+        this.setState({ logs: JSON.parse(reader.result) })
+      }
+      reader.readAsText(file);
+    }
+    event.target.value = null;
   }
 
   handleFilter = (e) => {
@@ -72,16 +79,21 @@ class App extends Component {
       <div className="App">
       <header className="App-header">
       <div className="text-center"><h2>JS Log Viewer</h2></div>
-      <div className="row">
-        <div className="col-md-6">
-          <input type="file" onChange={this.onChange} />
+      <div className="container">
+        <div className="row form-group">
+          <div className="col-md-4"></div>
+          <div className="col-md-4 custom-file">
+            <input type="file" onChange={this.onChange} className="custom-file-input" id="customFile" name="file"/>
+            <label className="custom-file-label" htmlFor="customFile">Choose file</label>
+          </div>
+          <div className="col-md-4">
+          {logs.length>1 ? 
+          <input className="form-control" value={this.state.filter} onChange={this.handleFilter} placeholder="Search or filter records" name="filter"/>
+          : null }
         </div>
-        <div className="col-md-6">
-        {logs.length>1 ? 
-        <input value={this.state.filter} onChange={this.handleFilter} placeholder="Search or filter records" name="filter"/>
-        : null }
         </div>
       </div>
+        <div className="container">
           <div className="row">
             <table className="table table-hover table-dark">
               <thead>
@@ -98,6 +110,7 @@ class App extends Component {
                 {filteredData.length>0 ? filteredData.map( (rowData,index) => <Row key={index} {...rowData} />): null }
               </tbody>
             </table>
+          </div>
           </div>
       </header>
     </div>
