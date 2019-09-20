@@ -10,7 +10,8 @@ class App extends Component {
       logs: [],
       headers: [],
       filter: "",
-      file:""
+      file:"",
+      haserror: false
     };
 
     this.sortObj = this.sortObj.bind(this);
@@ -46,14 +47,17 @@ class App extends Component {
       // dont do anything.
     }
     else {
-      try{
+     
         //reading file and loading the list into logs state and also keeping state for filename and headers for table
         var file = event.target.files[0];
         var reader = new FileReader();
         reader.fileName = file.name;
         reader.onload = (readerEvt) => {
           // console.log(reader.result);
-          this.setState({ logs: JSON.parse(reader.result),file:reader.fileName})
+          try{
+          let json = JSON.parse(reader.result);
+          
+          this.setState({ logs: json,file:reader.fileName})
           const data = JSON.parse(reader.result);
           //get all the keys/headers from the objects in arrays, repeating ones are ignored and then save these header to state.
           let headers = data.reduce(function (arr, o) {
@@ -62,13 +66,15 @@ class App extends Component {
               return a;
             }, arr)
           }, []);
-          this.setState({ headers: headers })
+          this.setState({ headers: headers,haserror: false })
+        }
+        catch(e){
+          // console.log("Exception "+e);
+          this.setState({ haserror: true })
+        }
         }
         reader.readAsText(file);
-      }
-      catch(e){
-        console.log("Exception "+e);
-      }
+      
     }
     //this allows to cancel if user opens file browser but cancels
     event.target.value = null;
@@ -115,12 +121,21 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <div className="text-center"><h1>JS Log Viewer</h1></div>
+          <div className="text-center"><h1>JS Log Viewer</h1>
+          {
+            this.state.haserror ?
+            <div className="alert alert-warning" role="alert">
+              File has invalid JSON. Check the example below or sample-log.json provided in project directory
+            </div>
+            :null
+          }
+          </div>
           <div className="container">
             <div className="row form-group">
               <div className="col-md-4 col-sm-4 col-xs-4"></div>
               {/* using these conditions to show and hide file browser and search bar before any data is laoded*/}
-              {logs.length === 0 ?
+              {
+                logs.length === 0 ?
                 <div className="col-md-4 custom-file mt-2 mb-2">
                   <input type="file" accept=".json" onChange={this.onChange} className="custom-file-input" id="customFile" name="file" />
                   <label className="custom-file-label" htmlFor="customFile">Choose file</label>
@@ -129,15 +144,19 @@ class App extends Component {
                     <pre><code className="aqua">{jsonexample}</code></pre>
                   </div>
                 </div>
-                : <div className="col-md-4 mt-2 mb-2">
+                : 
+                <div className="col-md-4 mt-2 mb-2">
                     <button className="btn btn-primary" type="button" onClick={this.resetViewer.bind(this)}>Import a new file</button><br/>
                     <h5 className="mt-2"><pre className="text-white">Reading {this.state.file}</pre></h5>
                   </div>
               }
               <div className="col-md-4 mt-2 mb-2">
-                {logs.length > 1 ?
+                {
+                  logs.length > 1 ?
                   <input className="form-control" value={this.state.filter} onChange={this.handleFilter} placeholder="Search or filter records" name="filter" />
-                  : null}
+                  : 
+                  null
+                }
               </div>
             </div>
           </div>
@@ -146,12 +165,22 @@ class App extends Component {
               <table className="table table-hover table-dark">
                 <thead>
                   <tr>
-                    {this.state.headers.length > 0 ? this.state.headers.map((header) => <th key={header} scope="col" onClick={this.sortObj.bind(this, header)}><u>{header}</u></th>) : null}
+                    {
+                      this.state.headers.length > 0 ? 
+                        this.state.headers.map((header) => <th key={header} scope="col" onClick={this.sortObj.bind(this, header)}><u>{header}</u></th>) 
+                        : 
+                        null
+                    }
                   </tr>
                 </thead>
                 <tbody>
                   {/* checking for headers otherwise the component doesnt recieve header prop cus it JS async :/ */}
-                  {filteredData.length > 0 && this.state.headers.length ? filteredData.map((rowData, index) => <Row key={index} {...rowData} header={this.state.headers} />) : null}
+                  {
+                    filteredData.length > 0 && this.state.headers.length ? 
+                      filteredData.map((rowData, index) => <Row key={index} {...rowData} header={this.state.headers} />) 
+                      : 
+                      null
+                  }
                 </tbody>
               </table>
             </div>
