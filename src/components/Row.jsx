@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+//Dynamic row component which accepts all the object props and also recieves headers and then displays based on headers values.. so JSON can have as many properties inside the object. It will work fine as long as we have Object Array like sample-log file.
 class Row extends Component {
   constructor(props) {
     super(props);
@@ -14,9 +14,11 @@ class Row extends Component {
     if (this.props.type !== undefined) {
       this.setState({ color: this.props.type.toLowerCase() })
     }
+    //save the props.header to header state for row which we commpare to whats passed to us.
     this.setState({ headers: this.props.header })
   }
 
+  //important logic to update state after we are filtering and sorting.. this makes sure its rendered properly with right styles.
   componentDidUpdate(prevProps, prevState) {
     // console.log("comoponent updated!!");
     // console.log("new type is "+this.props.type); 
@@ -25,6 +27,7 @@ class Row extends Component {
     }
   }
 
+  // renders each table row.. can actually move the whole table in here so that it becomes a full table component
   render() {
     return (
       <tr className={this.state.color + " " + this.props.datetime}>
