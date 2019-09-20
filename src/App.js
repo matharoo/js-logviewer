@@ -47,7 +47,6 @@ class App extends Component {
       // dont do anything.
     }
     else {
-     
         //reading file and loading the list into logs state and also keeping state for filename and headers for table
         var file = event.target.files[0];
         var reader = new FileReader();
