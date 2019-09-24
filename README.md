@@ -1,4 +1,4 @@
-# JS Log Viewer
+# JS Log Viewer - ReactJS app
   View, Sort, Search JSON logs
 
 
